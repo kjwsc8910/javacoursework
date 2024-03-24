@@ -1,6 +1,8 @@
 package com.kj.javacoursework;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,5 +22,11 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    public void startGame(View view) {
+        Log.d("Menu", "Test");
+        Game game = new Game(this);
+        setContentView(game);
     }
 }
