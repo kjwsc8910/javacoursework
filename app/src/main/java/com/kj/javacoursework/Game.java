@@ -14,7 +14,9 @@ public class Game extends View {
 	Context context;
 	Handler handler;
 	Runnable runnable;
-	final long frameTime = 16;
+	final long frameTime = 32;
+	float start;
+	float delta = 0;
 	Player player;
 	static int dWidth, dHeight;
 	int points;
@@ -28,7 +30,10 @@ public class Game extends View {
 		display.getSize(size);
 		dWidth = size.x;
 		dHeight = size.y;
-		player = new Player(context, dWidth/4 - player.getWidth()/2, dHeight - player.getHeight());
+		player = new Player(context);
+		player.setX(dWidth/4 - player.getWidth()/2);
+		player.setY(dHeight - player.getHeight());
+		player.setGroundY(player.getY());
 		handler = new Handler();
 		runnable = new Runnable() {
 			@Override
@@ -36,7 +41,7 @@ public class Game extends View {
 				invalidate();
 			}
 		};
-		super.setOnTouchListener(handleTouch);
+		this.setOnTouchListener(handleTouch);
 	}
 
 	private View.OnTouchListener handleTouch = new View.OnTouchListener() {
@@ -47,7 +52,7 @@ public class Game extends View {
 			switch (event.getAction()) {
 				case MotionEvent.ACTION_DOWN:
 					pressed = true;
-					Log.d("Test", "Press");
+					Log.d("Input", "Press");
 					break;
 
 				case MotionEvent.ACTION_MOVE:
@@ -56,20 +61,24 @@ public class Game extends View {
 
 				case MotionEvent.ACTION_UP:
 					pressed = false;
+					Log.d("Input", "Release");
 					break;
 			}
 			return pressed;
 		}
 	};
 
-	public void updateState() {
-		player.update(pressed);
+	public void updateState(float delta) {
+		player.update(delta, pressed);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		updateState();
+		delta = (System.nanoTime() - start) / 1000000000f;
+		//Log.d("FrameTime", Float.toString(delta));
+		start = System.nanoTime();
+		updateState(delta);
 		canvas.drawBitmap(player.getSprite(), player.getX(), player.getY(), null);
 		handler.postDelayed(runnable, frameTime);
 	}

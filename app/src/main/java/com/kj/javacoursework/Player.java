@@ -7,55 +7,65 @@ import android.util.Log;
 
 public class Player {
 	private Bitmap sprite;
-	private int posX, posY, groundY, velocity, maxVelocity = -50, gravity = -10;
+	private float posX, posY, groundY, velocity, maxVelocity = -3000f, gravity = -5000f;
 	private boolean grounded;
 
-	public Player(Context context, int x, int y) {
+	public Player(Context context) {
 		sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.dinosaur);
 		sprite = Bitmap.createScaledBitmap(
 				sprite, 128, 128, false);
-		posX = x;
-		posY = y;
-		groundY = y;
 		grounded = true;
 	}
 
-	public void update(boolean pressed) {
-		if (posY <= groundY) {
+	public void update(float delta, boolean pressed) {
+		if (posY >= groundY) {
 			posY = groundY;
 			grounded = true;
 		}
 
 		if(grounded == false) {
-			velocity -= gravity;
+			velocity += gravity * delta;
 			if(velocity < maxVelocity) velocity = maxVelocity;
-			posY =+ velocity;
+			if(posY - velocity * delta < groundY) {
+				posY -= velocity * delta;
+			} else {
+				posY = groundY;
+			}
 		}
 
-		if(grounded == true && pressed == true) Log.d("Test", "Jump");
+		if((grounded == true) && (pressed == true)) {
+			Log.d("Action", "Jump");
+			velocity = 2000f;
+			posY -= velocity * delta;
+			grounded = false;
+		}
 	}
 
-	public void setX(int x) {
+	public void setX(float x) {
 		posX = x;
 	}
 
-	public void setY(int y) {
+	public void setY(float y) {
 		posY = y;
 	}
 
-	public int getWidth() {
+	public void setGroundY(float y) {
+		groundY = y;
+	}
+
+	public float getWidth() {
 		return sprite.getWidth();
 	}
 
-	public int getHeight() {
+	public float getHeight() {
 		return sprite.getHeight();
 	}
 
-	public int getX() {
+	public float getX() {
 		return posX;
 	}
 
-	public int getY() {
+	public float getY() {
 		return posY;
 	}
 
