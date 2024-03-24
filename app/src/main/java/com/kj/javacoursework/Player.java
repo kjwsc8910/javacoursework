@@ -7,6 +7,7 @@ import android.util.Log;
 
 public class Player {
 	private Bitmap sprite;
+	private boolean alive = true;
 	private float posX, posY, groundY, velocity, maxVelocity = -3000f, gravity = -5000f;
 	private boolean grounded;
 
@@ -17,17 +18,17 @@ public class Player {
 		grounded = true;
 	}
 
-	public void update(float delta, boolean pressed) {
+	public void update(float delta, float speedUp, boolean pressed) {
 		if (posY >= groundY) {
 			posY = groundY;
 			grounded = true;
 		}
 
 		if(grounded == false) {
-			velocity += gravity * delta;
+			velocity += gravity * delta * speedUp;
 			if(velocity < maxVelocity) velocity = maxVelocity;
-			if(posY - velocity * delta < groundY) {
-				posY -= velocity * delta;
+			if(posY - velocity * delta * speedUp < groundY) {
+				posY -= velocity * delta * speedUp;
 			} else {
 				posY = groundY;
 			}
@@ -36,9 +37,17 @@ public class Player {
 		if((grounded == true) && (pressed == true)) {
 			Log.d("Action", "Jump");
 			velocity = 2000f;
-			posY -= velocity * delta;
+			posY -= velocity * delta * speedUp;
 			grounded = false;
 		}
+	}
+
+	public void deathAnimation(float delta) {
+		if (alive) velocity = 2000f;
+		alive = false;
+
+		posY -= velocity * delta;
+		velocity += gravity * delta;
 	}
 
 	public void setX(float x) {
