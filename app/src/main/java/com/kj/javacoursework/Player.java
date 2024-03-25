@@ -3,6 +3,7 @@ package com.kj.javacoursework;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.util.Log;
 
 public class Player {
@@ -10,12 +11,14 @@ public class Player {
 	private boolean alive = true;
 	private float posX, posY, groundY, velocity, maxVelocity = -3000f, gravity = -5000f;
 	private boolean grounded;
+	MediaPlayer jumpSound;
 
 	public Player(Context context) {
 		sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.dinosaur);
 		sprite = Bitmap.createScaledBitmap(
 				sprite, 128, 128, false);
 		grounded = true;
+		jumpSound = MediaPlayer.create(context, R.raw.jump);
 	}
 
 	public void update(float delta, float speedUp, boolean pressed) {
@@ -35,10 +38,12 @@ public class Player {
 		}
 
 		if((grounded == true) && (pressed == true)) {
+			jumpSound.start();
 			Log.d("Action", "Jump");
 			velocity = 2000f;
 			posY -= velocity * delta * speedUp;
 			grounded = false;
+
 		}
 	}
 

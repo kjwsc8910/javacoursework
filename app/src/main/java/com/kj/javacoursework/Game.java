@@ -2,10 +2,13 @@ package com.kj.javacoursework;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
@@ -14,7 +17,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.zip.Adler32;
+
 
 public class Game extends View {
 	Context context;
@@ -34,6 +37,8 @@ public class Game extends View {
 	int textSize = 150;
 	boolean pressed;
 	Random random = new Random();
+	MediaPlayer deathSound;
+
 
 	public Game(Context context) {
 		super(context);
@@ -46,6 +51,8 @@ public class Game extends View {
 		textPaint.setColor(Color.rgb(0, 0, 0));
 		textPaint.setTextSize(textSize);
 		textPaint.setTextAlign(Paint.Align.CENTER);
+		deathSound = MediaPlayer.create(context, R.raw.death);
+
 
 		player = new Player(context);
 		player.setX(dWidth/4 - player.getWidth()/2);
@@ -96,8 +103,20 @@ public class Game extends View {
 		}
 	};
 
-	public void gameOver() {
+	public synchronized void gameOver() {
 		alive = false;
+		deathSound.start();
+		final Handler endGame = new Handler();
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				Intent intent = new Intent(context, GameOver.class);
+				intent.putExtra("points", points);
+				context.startActivity(intent);
+				((Activity) context).finish();
+			}
+		}, 3500);
+
 	}
 
 	public void updateState(float delta) {
@@ -114,7 +133,7 @@ public class Game extends View {
 			cactusList.add(createCactus());
 		}
 
-		speedUp += 0.01f * delta;
+		speedUp += 0.10f * delta;
 	}
 
 	public void drawState(Canvas canvas) {
