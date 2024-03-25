@@ -17,27 +17,30 @@ public class GameOver extends AppCompatActivity {
 	TextView tvHighScoreAlert;
 	SharedPreferences sharedPreferences;
 
+
+	// Constructor
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		Log.d("Test", "GameOver");
 		super.onCreate(savedInstanceState);
-		EdgeToEdge.enable(this);
-		setContentView(R.layout.game_over);
-		tvPoints = findViewById(R.id.go_txt_points);
-		tvHighScoreAlert = findViewById(R.id.go_txt_highScoreAlert);
-		int points = getIntent().getExtras().getInt("points");
-		tvPoints.setText(Integer.toString(points));
-		sharedPreferences = getSharedPreferences("my_pref", 0);
-		int highScore = sharedPreferences.getInt("highScore", 0);
+		EdgeToEdge.enable(this);								// Remove boarders
+		setContentView(R.layout.game_over);											// Loads the game over xml
+		tvPoints = findViewById(R.id.go_txt_points);								// Gets the points text
+		tvHighScoreAlert = findViewById(R.id.go_txt_highScoreAlert);				// Gets the high score alert text
+		int points = getIntent().getExtras().getInt("points");					// Retrieves the points from the intent
+		tvPoints.setText(Integer.toString(points));									// Sets the text to show the points
+		sharedPreferences = getSharedPreferences("my_pref", 0);			// Loads the shared preferences
+		int highScore = sharedPreferences.getInt("highScore", 0);		// Loads the high score from shared preferences
 		SharedPreferences.Editor editor = sharedPreferences.edit();
-		if(points > highScore) {
+		if(points > highScore) {													// Updates high score when needed
 			editor.putInt("highScore", points);
 			tvHighScoreAlert.setText("New High Score!");
 		}
-		editor.putInt("lastScore", points);
-		editor.commit();
+		editor.putInt("lastScore", points);											// Stores the current score in the shared preferences
+		editor.commit();															// Commits the changes
 	}
 
+	// Loads the main menu
 	public void mainMenu(View view)  {
 		Intent intent = new Intent(GameOver.this, MainActivity.class);
 		startActivity(intent);
