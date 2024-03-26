@@ -39,13 +39,14 @@ public class Player {
 	// Updates the players position
 	public void update(float delta, float speedUp, boolean pressed) {
 
-		animTime -= delta * speedUp;
+		animTime -= delta * speedUp;	// Update the time untill next animation frame
 
+		// Check if the next frame should be displayed
 		if(animTime <= 0f && grounded) {
-			animFrame += 1;
-			if(animFrame >= 2) animFrame = 0;
+			animFrame += 1;		// Select the next frame in the animation
+			if(animFrame >= 2) animFrame = 0;	// Go back to first frame when at the end of the animation
 			sprite = sprites[animFrame];
-			animTime = 0.25f;
+			animTime = 0.25f;	// Restart the timer
 		}
 
 		// If on or below ground
