@@ -6,26 +6,47 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class Player {
+	private Bitmap sprites[] = new Bitmap[4];
 	private Bitmap sprite;
 	private boolean alive = true;	// Tracks the status of the player
 
 	// Stores the position of the character, ground and the velocity, max velocity and gravity used in the physics calculations
 	private float posX, posY, groundY, velocity, maxVelocity = -3000f, gravity = -5000f;
 	private boolean grounded;	// Tracks weather the player is touching the ground
-	MediaPlayer jumpSound;		// Sound for when the player jumps
+	private MediaPlayer jumpSound;		// Sound for when the player jumps
+	private float animTime = 0.25f;
+	private int animFrame = 0;
 
 	// Constructor
 	public Player(Context context) {
-		sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.dinosaur);	// Set the bitmap
-		sprite = Bitmap.createScaledBitmap(													// Resize the bitmap
-				sprite, 128, 128, false);
+		sprites[0] = BitmapFactory.decodeResource(context.getResources(), R.drawable.dinosaur2);	// Set the bitmap
+		sprites[1] = BitmapFactory.decodeResource(context.getResources(), R.drawable.dinosaur3);
+		sprites[2] = BitmapFactory.decodeResource(context.getResources(), R.drawable.dinosaur);
+		sprites[0] = Bitmap.createScaledBitmap(														// Resize the bitmap
+				sprites[0], 128, 128, false);
+		sprites[1] = Bitmap.createScaledBitmap(
+				sprites[1], 128, 128, false);
+		sprites[2] = Bitmap.createScaledBitmap(
+				sprites[2], 128, 128, false);
 		grounded = true;										// Set the grounded state
 		jumpSound = MediaPlayer.create(context, R.raw.jump);	// Sets the jump sound
+		sprite = sprites[animFrame];
 	}
 
 	// Updates the players position
 	public void update(float delta, float speedUp, boolean pressed) {
+
+		animTime -= delta * speedUp;
+
+		if(animTime <= 0f && grounded) {
+			animFrame += 1;
+			if(animFrame >= 2) animFrame = 0;
+			sprite = sprites[animFrame];
+			animTime = 0.25f;
+		}
 
 		// If on or below ground
 		// Place on ground and set its grounded state
@@ -52,7 +73,8 @@ public class Player {
 			velocity = 2000f;						// Set its velocity
 			posY -= velocity * delta * speedUp;		// Update is position
 			grounded = false;						// Update its grounded status
-
+			animFrame = 2;							// Set anim to show jump sprite
+			sprite = sprites[animFrame];
 		}
 	}
 

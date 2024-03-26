@@ -14,7 +14,7 @@ public class Cactus {
 	public Cactus(Context context) {
 		sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.cactus);	// Set bitmap
 		sprite = Bitmap.createScaledBitmap(													// Resize bitmap
-				sprite, 128, 128, false);
+				sprite, 64, 128, false);
 		speed = 600f;																		// Set speed
 	}
 
